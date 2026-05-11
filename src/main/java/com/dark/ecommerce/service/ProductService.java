@@ -1,48 +1,44 @@
 package com.dark.ecommerce.service;
 
 import com.dark.ecommerce.entity.Product;
+import com.dark.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ProductService {
 
-    private final List<Product> products = new ArrayList<>();
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public Product addProduct(Product product) {
-        products.add(product);
-        return product;
+        return productRepository.save(product);
     }
 
     public List<Product> getAllProducts() {
-        return products;
+        return productRepository.findAll();
     }
 
     public Product getProductById(Long id) {
-
-        for (Product product : products) {
-            if (product.getId().equals(id)) {
-                return product;
-            }
-        }
-
-        return null;
+        return productRepository.findById(id).orElse(null);
     }
 
     public Product updateProduct(Long id, Product updatedProduct) {
 
-        for (Product product : products) {
+        Product existingProduct =
+                productRepository.findById(id).orElse(null);
 
-            if (product.getId().equals(id)) {
+        if(existingProduct != null) {
 
-                product.setName(updatedProduct.getName());
-                product.setPrice(updatedProduct.getPrice());
-                product.setDescription(updatedProduct.getDescription());
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setDescription(updatedProduct.getDescription());
 
-                return product;
-            }
+            return productRepository.save(existingProduct);
         }
 
         return null;
@@ -50,8 +46,8 @@ public class ProductService {
 
     public String deleteProduct(Long id) {
 
-        products.removeIf(product -> product.getId().equals(id));
+        productRepository.deleteById(id);
 
-        return "Product deleted";
+        return "Product deleted successfully";
     }
-}   
+}
