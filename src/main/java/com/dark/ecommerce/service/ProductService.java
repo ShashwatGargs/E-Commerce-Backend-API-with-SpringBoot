@@ -3,7 +3,7 @@ package com.dark.ecommerce.service;
 import com.dark.ecommerce.entity.Product;
 import com.dark.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-
+import com.dark.ecommerce.exception.ProductNotFoundException;
 import java.util.List;
 
 @Service
@@ -24,30 +24,35 @@ public class ProductService {
     }
 
     public Product getProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product not found with ID: " + id));
     }
 
     public Product updateProduct(Long id, Product updatedProduct) {
 
-        Product existingProduct =
-                productRepository.findById(id).orElse(null);
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product not found with ID: " + id));
 
-        if(existingProduct != null) {
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setDescription(updatedProduct.getDescription());
 
-            existingProduct.setName(updatedProduct.getName());
-            existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setDescription(updatedProduct.getDescription());
-
-            return productRepository.save(existingProduct);
-        }
-
-        return null;
+        return productRepository.save(existingProduct);
     }
 
     public String deleteProduct(Long id) {
 
-        productRepository.deleteById(id);
+    Product product = productRepository.findById(id)
+            .orElseThrow(() ->
+                    new ProductNotFoundException(
+                            "Product not found with ID: " + id
+                    ));
 
-        return "Product deleted successfully";
-    }
+    productRepository.delete(product);
+
+    return "Product deleted successfully";
+}
 }

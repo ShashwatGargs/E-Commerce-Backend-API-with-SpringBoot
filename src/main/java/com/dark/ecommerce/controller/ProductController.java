@@ -5,6 +5,7 @@ import com.dark.ecommerce.entity.Product;
 import com.dark.ecommerce.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -18,7 +19,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product addProduct(@RequestBody Product product) {
+    public Product addProduct(@Valid @RequestBody Product product) {
 
         return productService.addProduct(product);
     }
@@ -36,7 +37,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public Product updateProduct(
             @PathVariable Long id,
-            @RequestBody Product product
+            @Valid @RequestBody Product product
     ) {
         return productService.updateProduct(id, product);
     }
