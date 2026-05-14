@@ -1,40 +1,30 @@
-package com.dark.ecommerce.entity;
+package com.dark.ecommerce.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-@Entity
-public class Product {
+public class ProductRequestDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    
+    @NotBlank(message = "Product name cannot be empty")
     private String name;
 
-  
+    @Min(value = 1, message = "Price must be greater than 0")
     private double price;
 
-    
+    @NotBlank(message = "Description cannot be empty")
     private String description;
 
-    public Product() {
+    public ProductRequestDTO() {
     }
 
-    public Product(Long id, String name, double price, String description) {
-        this.id = id;
+    public ProductRequestDTO(
+            String name,
+            double price,
+            String description
+    ) {
         this.name = name;
         this.price = price;
         this.description = description;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -49,10 +39,6 @@ public class Product {
         return description;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -64,4 +50,4 @@ public class Product {
     public void setDescription(String description) {
         this.description = description;
     }
-}
+} 

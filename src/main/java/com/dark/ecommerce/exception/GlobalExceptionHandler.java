@@ -34,5 +34,5 @@ handleProductNotFound(ProductNotFoundException ex) {
     error.put("error", ex.getMessage());
 
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-}
+}   
 }

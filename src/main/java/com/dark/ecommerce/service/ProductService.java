@@ -1,9 +1,12 @@
 package com.dark.ecommerce.service;
 
+import com.dark.ecommerce.dto.ProductRequestDTO;
+import com.dark.ecommerce.dto.ProductResponseDTO;
 import com.dark.ecommerce.entity.Product;
+import com.dark.ecommerce.exception.ProductNotFoundException;
 import com.dark.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-import com.dark.ecommerce.exception.ProductNotFoundException;
+
 import java.util.List;
 
 @Service
@@ -15,44 +18,78 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Product addProduct(Product product) {
-        return productRepository.save(product);
+    public ProductResponseDTO addProduct(ProductRequestDTO dto) {
+
+        Product product = new Product();
+
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setDescription(dto.getDescription());
+
+        Product savedProduct = productRepository.save(product);
+
+        return mapToResponseDTO(savedProduct);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponseDTO> getAllProducts() {
+
+        return productRepository.findAll()
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
     }
 
-    public Product getProductById(Long id) {
+    public ProductResponseDTO getProductById(Long id) {
 
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(
-                        "Product not found with ID: " + id));
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException(
+                                "Product not found with ID: " + id
+                        ));
+
+        return mapToResponseDTO(product);
     }
 
-    public Product updateProduct(Long id, Product updatedProduct) {
+    public ProductResponseDTO updateProduct(
+            Long id,
+            ProductRequestDTO dto
+    ) {
 
-        Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(
-                        "Product not found with ID: " + id));
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException(
+                                "Product not found with ID: " + id
+                        ));
 
-        existingProduct.setName(updatedProduct.getName());
-        existingProduct.setPrice(updatedProduct.getPrice());
-        existingProduct.setDescription(updatedProduct.getDescription());
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setDescription(dto.getDescription());
 
-        return productRepository.save(existingProduct);
+        Product updatedProduct = productRepository.save(product);
+
+        return mapToResponseDTO(updatedProduct);
     }
 
     public String deleteProduct(Long id) {
 
-    Product product = productRepository.findById(id)
-            .orElseThrow(() ->
-                    new ProductNotFoundException(
-                            "Product not found with ID: " + id
-                    ));
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException(
+                                "Product not found with ID: " + id
+                        ));
 
-    productRepository.delete(product);
+        productRepository.delete(product);
 
-    return "Product deleted successfully";
-}
+        return "Product deleted successfully";
+    }
+
+    private ProductResponseDTO mapToResponseDTO(Product product) {
+
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getDescription()
+        );
+    }
 }

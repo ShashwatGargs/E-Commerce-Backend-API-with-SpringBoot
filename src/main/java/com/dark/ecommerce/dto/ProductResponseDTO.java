@@ -1,32 +1,24 @@
-package com.dark.ecommerce.entity;
+package com.dark.ecommerce.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+public class ProductResponseDTO {
 
-@Entity
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    
     private String name;
 
-  
     private double price;
 
-    
     private String description;
 
-    public Product() {
+    public ProductResponseDTO() {
     }
 
-    public Product(Long id, String name, double price, String description) {
+    public ProductResponseDTO(
+            Long id,
+            String name,
+            double price,
+            String description
+    ) {
         this.id = id;
         this.name = name;
         this.price = price;

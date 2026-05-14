@@ -1,11 +1,11 @@
-
 package com.dark.ecommerce.controller;
 
-import com.dark.ecommerce.entity.Product;
+import com.dark.ecommerce.dto.ProductRequestDTO;
+import com.dark.ecommerce.dto.ProductResponseDTO;
 import com.dark.ecommerce.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,31 +19,36 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product addProduct(@Valid @RequestBody Product product) {
-
-        return productService.addProduct(product);
+    public ProductResponseDTO addProduct(
+            @Valid @RequestBody ProductRequestDTO dto
+    ) {
+        return productService.addProduct(dto);
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<ProductResponseDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
+    public ProductResponseDTO getProductById(
+            @PathVariable Long id
+    ) {
         return productService.getProductById(id);
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(
+    public ProductResponseDTO updateProduct(
             @PathVariable Long id,
-            @Valid @RequestBody Product product
+            @Valid @RequestBody ProductRequestDTO dto
     ) {
-        return productService.updateProduct(id, product);
+        return productService.updateProduct(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable Long id) {
+    public String deleteProduct(
+            @PathVariable Long id
+    ) {
         return productService.deleteProduct(id);
-    }   
+    }
 }
