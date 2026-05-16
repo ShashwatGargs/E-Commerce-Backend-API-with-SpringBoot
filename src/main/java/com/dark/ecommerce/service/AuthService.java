@@ -6,25 +6,28 @@ import com.dark.ecommerce.entity.User;
 import com.dark.ecommerce.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.dark.ecommerce.security.JwtService;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     private final PasswordEncoder passwordEncoder;
 
     public AuthService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder
-    ) {
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public String register(RegisterRequestDTO dto) {
 
-        if(userRepository.findByEmail(dto.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             return "Email already exists";
         }
 
@@ -33,8 +36,7 @@ public class AuthService {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
 
-        String encodedPassword =
-                passwordEncoder.encode(dto.getPassword());
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
         user.setPassword(encodedPassword);
 
@@ -50,20 +52,18 @@ public class AuthService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElse(null);
 
-        if(user == null) {
+        if (user == null) {
             return "Invalid email";
         }
 
-        boolean passwordMatches =
-                passwordEncoder.matches(
-                        dto.getPassword(),
-                        user.getPassword()
-                );
+        boolean passwordMatches = passwordEncoder.matches(
+                dto.getPassword(),
+                user.getPassword());
 
-        if(!passwordMatches) {
+        if (!passwordMatches) {
             return "Invalid password";
         }
 
-        return "Login successful";
+        return jwtService.generateToken(user.getEmail());
     }
 }
