@@ -7,7 +7,11 @@ import com.dark.ecommerce.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.dark.ecommerce.security.JwtService;
-
+/*
+  Service class responsible for authentication logic.
+  Handles user registration, password encryption,
+  login validation, and JWT token generation.
+ */
 @Service
 public class AuthService {
 

@@ -7,6 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+/*
+  Entity class representing a product in the e-commerce system.
+  Maps to the product table in MySQL using JPA/Hibernate.
+  Stores product-related data such as name, price, and description.
+ */
+
 @Entity
 public class Product {
 
@@ -14,13 +20,10 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    
     private String name;
 
-  
     private double price;
 
-    
     private String description;
 
     public Product() {

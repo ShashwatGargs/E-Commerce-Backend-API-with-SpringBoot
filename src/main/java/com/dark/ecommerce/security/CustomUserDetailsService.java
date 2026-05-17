@@ -7,7 +7,11 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/*
+  Custom implementation of Spring Security's UserDetailsService.
+  Loads user details from the database during authentication
+  and provides user roles and credentials to Spring Security.
+ */
 @Service
 public class CustomUserDetailsService
         implements UserDetailsService {

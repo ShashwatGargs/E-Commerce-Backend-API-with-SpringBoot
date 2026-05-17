@@ -8,7 +8,11 @@ import com.dark.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/*
+  Service class containing business logic for product management.
+  Handles product creation, retrieval, updating, and deletion
+  while interacting with the repository layer.
+ */
 @Service
 public class ProductService {
 

@@ -1,6 +1,10 @@
 
 package com.dark.ecommerce.dto;
-
+/*
+  DTO used for login requests.
+  Carries user authentication credentials
+  including email and password.
+ */
 public class LoginRequestDTO {
 
     private String email;

@@ -2,6 +2,12 @@ package com.dark.ecommerce.entity;
 
 import jakarta.persistence.*;
 
+/*
+  Entity class representing an application user.
+  Maps to the users table in the database.
+  Stores authentication and authorization data including
+  email, encrypted password, and user role.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -27,8 +33,7 @@ public class User {
             String name,
             String email,
             String password,
-            String role
-    ) {
+            String role) {
         this.id = id;
         this.name = name;
         this.email = email;

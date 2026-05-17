@@ -1,5 +1,10 @@
 package com.dark.ecommerce.dto;
 
+/*
+  DTO used for user registration requests.
+  Carries user signup data such as name,
+  email, and password from client to backend.
+ */
 public class RegisterRequestDTO {
 
     private String name;
@@ -12,8 +17,7 @@ public class RegisterRequestDTO {
     public RegisterRequestDTO(
             String name,
             String email,
-            String password
-    ) {
+            String password) {
         this.name = name;
         this.email = email;
         this.password = password;

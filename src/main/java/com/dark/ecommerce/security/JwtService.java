@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-
+/*
+  Service class responsible for generating and validating JWT tokens.
+  Handles token creation, extracting user information,
+  and verifying token authenticity and expiration.
+ */
 @Service
 public class JwtService {
 

@@ -2,7 +2,11 @@ package com.dark.ecommerce.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-
+/*
+  DTO used for transferring product data between
+  client requests/responses and backend services.
+  Helps prevent direct exposure of entity classes.
+ */
 public class ProductRequestDTO {
 
     @NotBlank(message = "Product name cannot be empty")
