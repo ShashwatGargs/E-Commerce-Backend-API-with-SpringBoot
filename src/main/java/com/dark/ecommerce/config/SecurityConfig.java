@@ -12,6 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
+import org.springframework.web.cors.*;
+import java.util.List;
+
 /*
   Security configuration class for Spring Security.
   Configures JWT authentication, protected routes,
@@ -21,55 +25,74 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtFilter;
+        private final JwtAuthenticationFilter jwtFilter;
 
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtFilter
-    ) {
-        this.jwtFilter = jwtFilter;
-    }
+        public SecurityConfig(
+                        JwtAuthenticationFilter jwtFilter) {
+                this.jwtFilter = jwtFilter;
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
-    ) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(
+                        HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
+                http            
+                                .cors(cors -> {})
 
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
+                                .csrf(csrf -> csrf.disable())
 
-                .authorizeHttpRequests(auth -> auth
+                                .sessionManagement(session -> session.sessionCreationPolicy(
+                                                SessionCreationPolicy.STATELESS))
 
-                        .requestMatchers(
-                                "/auth/**"
-                        ).permitAll()
+                                .authorizeHttpRequests(auth -> auth
 
-                        .anyRequest().authenticated()
-                )
+                                                .requestMatchers(
+                                                                "/auth/**")
+                                                .permitAll()
 
-                .addFilterBefore(
-                        jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                                                .anyRequest().authenticated())
 
-        return http.build();
-    }
+                                .addFilterBefore(
+                                                jwtFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config
-    ) throws Exception {
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-        return config.getAuthenticationManager();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(
+                        AuthenticationConfiguration config) throws Exception {
+
+                return config.getAuthenticationManager();
+        }
+
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+
+                CorsConfiguration configuration = new CorsConfiguration();
+
+                configuration.setAllowedOrigins(
+                                List.of("http://localhost:5173"));
+
+                configuration.setAllowedMethods(
+                                List.of("GET", "POST", "PUT", "DELETE"));
+
+                configuration.setAllowedHeaders(
+                                List.of("*"));
+
+                configuration.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+                source.registerCorsConfiguration(
+                                "/**",
+                                configuration);
+
+                return source;
+        }
 }
