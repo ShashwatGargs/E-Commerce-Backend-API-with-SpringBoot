@@ -6,6 +6,9 @@ import com.dark.ecommerce.entity.Product;
 import com.dark.ecommerce.exception.ProductNotFoundException;
 import com.dark.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 /*
@@ -95,5 +98,17 @@ public class ProductService {
                 product.getPrice(),
                 product.getDescription()
         );
+    }
+
+    //For Pagination (Search + Pagination)
+    public Page<Product> searchProducts(String keyword,int page,int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
+    }
+
+    //For Pagination Only
+    public Page<Product> getProductPaginated(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable);
     }
 }
