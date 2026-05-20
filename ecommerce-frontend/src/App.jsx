@@ -1,28 +1,25 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom"
+import {BrowserRouter, Routes, Route} from "react-router-dom"
 
 import LoginPage from "./pages/LoginPage"
+import ProductsPage from "./pages/ProductsPage"
 
 function App() {
 
-  return (
+	return (
 
-    <BrowserRouter>
+		<BrowserRouter>
 
-      <Routes>
+			<Routes>
 
-        <Route
-          path="/"
-          element={<LoginPage />}
-        />
+				<Route path="/"
+					element={<LoginPage/>}/>
+				<Route path="/products"
+					element={<ProductsPage/>}/>
 
-      </Routes>
+			</Routes>
 
-    </BrowserRouter>
-  )
+		</BrowserRouter>
+	)
 }
 
 export default App

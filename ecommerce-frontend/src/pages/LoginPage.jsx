@@ -1,74 +1,98 @@
-import {useState} from "react"
+import { useState } from "react"
+
+import { useNavigate } from "react-router-dom"
 
 function LoginPage() {
 
-	const [email, setEmail] = useState("")
-	const [password, setPassword] = useState("")
+    const navigate = useNavigate()
 
-	const handleLogin = async (e) => {
+    const [email, setEmail] = useState("")
 
-		e.preventDefault()
+    const [password, setPassword] = useState("")
 
-		try {
+    const handleLogin = async (e) => {
 
-			const response = await fetch("http://localhost:8080/auth/login", {
-				method: "POST",
+        e.preventDefault()
 
-				headers: {
-					"Content-Type": "application/json"
-				},
+        try {
 
-				body: JSON.stringify(
-					{email, password}
-				)
-			})
+            const response = await fetch(
+                "http://localhost:8080/auth/login",
+                {
+                    method: "POST",
 
-			const data = await response.text()
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
-			console.log(data)
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            )
 
-		} catch (error) {
+            const data = await response.text()
 
-			console.error(error)
-		}
-	}
+            localStorage.setItem(
+                "token",
+                data
+            )
 
-	return (
+            navigate("/products")
 
-		<div>
+        } catch (error) {
 
-			<h2>Login</h2>
+            console.error(error)
+        }
+    }
 
-			<form onSubmit={handleLogin}>
+    return (
 
-				<div>
-					<input type="email" placeholder="Enter email"
-						value={email}
-						onChange={
-							(e) => setEmail(e.target.value)
-						}/>
-				</div>
+        <div>
 
-				<br/>
+            <h2>Login</h2>
 
-				<div>
-					<input type="password" placeholder="Enter password"
-						value={password}
-						onChange={
-							(e) => setPassword(e.target.value)
-						}/>
-				</div>
+            <form onSubmit={handleLogin}>
 
-				<br/>
+                <div>
 
-				<button type="submit">
-					Login
-				</button>
+                    <input
+                        type="email"
+                        placeholder="Enter email"
+                        value={email}
+                        onChange={(e) =>
+                            setEmail(e.target.value)
+                        }
+                    />
 
-			</form>
+                </div>
 
-		</div>
-	)
+                <br />
+
+                <div>
+
+                    <input
+                        type="password"
+                        placeholder="Enter password"
+                        value={password}
+                        onChange={(e) =>
+                            setPassword(e.target.value)
+                        }
+                    />
+
+                </div>
+
+                <br />
+
+                <button type="submit">
+                    Login
+                </button>
+
+            </form>
+
+        </div>
+    )
 }
 
 export default LoginPage
