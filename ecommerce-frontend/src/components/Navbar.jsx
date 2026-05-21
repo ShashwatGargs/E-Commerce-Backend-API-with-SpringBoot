@@ -1,38 +1,40 @@
-import { useNavigate } from "react-router-dom"
+import {useNavigate} from "react-router-dom"
 
 function Navbar() {
 
-    const navigate = useNavigate()
+	const navigate = useNavigate()
 
-    const handleLogout = () => {
+	const handleLogout = () => {
 
-        localStorage.removeItem("token")
+		localStorage.removeItem("token")
 
-        navigate("/")
-    }
+		navigate("/")
+	}
 
-    return (
+	return (
 
-        <div>
+		<div>
 
-            <button
-                onClick={() =>
-                    navigate("/products")
-                }
-            >
-                Products
-            </button>
+			<button onClick={
+				() => navigate("/products")
+			}>
+				Products
+			</button>
+			<button onClick={
+				() => navigate("/cart")
+			}>
+				Cart
+			</button>
 
-            <button
-                onClick={handleLogout}
-            >
-                Logout
-            </button>
+			<button onClick={handleLogout}>
+				Logout
+			</button>
 
-            <hr />
 
-        </div>
-    )
+			<hr/>
+
+		</div>
+	)
 }
 
 export default Navbar
