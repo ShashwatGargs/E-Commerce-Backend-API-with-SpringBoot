@@ -1,4 +1,5 @@
 import {useNavigate} from "react-router-dom"
+import "../style/Navbar.css";
 
 function Navbar() {
 
@@ -13,25 +14,37 @@ function Navbar() {
 
 	return (
 
-		<div>
+		<div className="navbar">
 
-			<button onClick={
-				() => navigate("/products")
-			}>
-				Products
-			</button>
-			<button onClick={
-				() => navigate("/cart")
-			}>
-				Cart
-			</button>
+			<div className="navbar-title">
+				E-Commerce
+			</div>
 
-			<button onClick={handleLogout}>
-				Logout
-			</button>
+			<div className="navbar-buttons">
 
+				<button className="navbar-button"
 
-			<hr/>
+					onClick={
+						() => navigate("/products")
+				}>
+					Products
+				</button>
+
+				<button className="navbar-button"
+
+					onClick={
+						() => navigate("/cart")
+				}>
+					Cart
+				</button>
+
+				<button className="navbar-button"
+
+					onClick={handleLogout}>
+					Logout
+				</button>
+
+			</div>
 
 		</div>
 	)

@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react"
 
 import Navbar from "../components/Navbar"
+import "../style/CartPage.css"
 
 function CartPage() {
 
@@ -86,44 +87,61 @@ function CartPage() {
 
 			<Navbar/>
 
-			<h2>Cart</h2>
+			<div className="cart-container">
 
-			<button onClick={placeOrder}>
-				Place Order
-			</button>
+				<h2 className="cart-title">
+					Cart
+				</h2>
 
-			<hr/> {
-			cartItems.map((item) => (
+				<button onClick={placeOrder}
 
-				<div key={
-					item.id
-				}>
+					className="place-order-button">
+					Place Order
+				</button>
 
-					<h3> {
-						item.product.name
-					} </h3>
+				<div className="cart-grid">
 
-					<p>
-						Quantity: {
-						item.quantity
-					} </p>
+					{
+					cartItems.map((item) => (
 
-					<p>
-						Price:
-																														                            ₹ {
-						item.product.price
-					} </p>
+						<div key={
+								item.id
+							}
 
-					<button onClick={
-						() => removeFromCart(item.id)
-					}>
-						Remove
-					</button>
-					<hr/>
+							className="cart-card">
 
-				</div>
-			))
-		} </div>
+							<h3 className="cart-product-name">
+								{
+								item.product.name
+							} </h3>
+
+							<p>
+								Quantity: {
+								item.quantity
+							} </p>
+
+							<p className="
+									                                    cart-product-price
+									                                ">
+								₹ {
+								item.product.price
+							} </p>
+
+							<button className="remove-button"
+
+								onClick={
+									() => removeFromCart(item.id)
+							}>
+								Remove
+							</button>
+
+						</div>
+					))
+				} </div>
+
+			</div>
+
+		</div>
 	)
 }
 

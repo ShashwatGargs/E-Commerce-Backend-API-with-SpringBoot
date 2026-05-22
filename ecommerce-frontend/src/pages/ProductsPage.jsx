@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react"
 import Navbar from "../components/Navbar"
+import "../style/ProductsPage.css"
 function ProductsPage() {
 
 	const [products, setProducts] = useState([])
@@ -64,41 +65,56 @@ function ProductsPage() {
 	return (
 
 		<div>
+
 			<Navbar/>
 
-			<h2>Products</h2>
+			<div className="products-container">
 
-			{
-			products.map((product) => (
+				<h2 className="products-title">
+					Products
+				</h2>
 
-				<div key={
-					product.id
-				}>
+				<div className="products-grid">
 
-					<h3>{
-						product.name
-					}</h3>
+					{
+					products.map((product) => (
 
-					<p> {
-						product.description
-					} </p>
+						<div key={
+								product.id
+							}
 
-					<p>
-						₹ {
-						product.price
-					} </p>
+							className="product-card">
 
-					<button onClick={
-						() => addToCart(product.id)
-					}>
-						Add To Cart
-					</button>
+							<h3 className="product-name">
+								{
+								product.name
+							} </h3>
 
-					<hr/>
+							<p className="product-description">
+								{
+								product.description
+							} </p>
 
-				</div>
-			))
-		} </div>
+							<p className="product-price">
+								₹ {
+								product.price
+							} </p>
+
+							<button className="product-button"
+
+								onClick={
+									() => addToCart(product.id)
+							}>
+								Add To Cart
+							</button>
+
+						</div>
+					))
+				} </div>
+
+			</div>
+
+		</div>
 	)
 }
 

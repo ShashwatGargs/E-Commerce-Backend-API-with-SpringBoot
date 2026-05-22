@@ -1,98 +1,109 @@
-import { useState } from "react"
+import {useState} from "react"
 
-import { useNavigate } from "react-router-dom"
+
+import {useNavigate} from "react-router-dom"
+import "../style/LoginPage.css"
 
 function LoginPage() {
 
-    const navigate = useNavigate()
+	const navigate = useNavigate()
 
-    const [email, setEmail] = useState("")
+	const [email, setEmail] = useState("")
 
-    const [password, setPassword] = useState("")
+	const [password, setPassword] = useState("")
 
-    const handleLogin = async (e) => {
+	const [error, setError] = useState("")
 
-        e.preventDefault()
+	const handleLogin = async (e) => {
 
-        try {
+		e.preventDefault()
 
-            const response = await fetch(
-                "http://localhost:8080/auth/login",
-                {
-                    method: "POST",
+		try {
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+			if (!email || !password) {
 
-                    body: JSON.stringify({
-                        email,
-                        password
-                    })
-                }
-            )
+				setError("All fields are required")
 
-            const data = await response.text()
+				return
 
-            localStorage.setItem(
-                "token",
-                data
-            )
+			}
+			setError("")
 
-            navigate("/products")
+			const response = await fetch("http://localhost:8080/auth/login", {
+				method: "POST",
 
-        } catch (error) {
+				headers: {
+					"Content-Type": "application/json"
+				},
 
-            console.error(error)
-        }
-    }
+				body: JSON.stringify(
+					{email, password}
+				)
+			})
 
-    return (
+			const data = await response.text()
 
-        <div>
+			if (data === "Invalid email" || data === "Invalid password") {
 
-            <h2>Login</h2>
+				setError(data)
 
-            <form onSubmit={handleLogin}>
+				return
+			}
 
-                <div>
+			localStorage.setItem("token", data)
 
-                    <input
-                        type="email"
-                        placeholder="Enter email"
-                        value={email}
-                        onChange={(e) =>
-                            setEmail(e.target.value)
-                        }
-                    />
+			navigate("/products")
 
-                </div>
+		} catch (error) {
 
-                <br />
+			console.error(error)
+		}
+	}
 
-                <div>
+	return (
 
-                    <input
-                        type="password"
-                        placeholder="Enter password"
-                        value={password}
-                        onChange={(e) =>
-                            setPassword(e.target.value)
-                        }
-                    />
+		<div className="login-container">
 
-                </div>
+			<form onSubmit={handleLogin}
+				className="login-form">
 
-                <br />
+				<h2 className="login-title">
+					Login
+				</h2>
 
-                <button type="submit">
-                    Login
-                </button>
+				<input type="email" placeholder="Enter email"
 
-            </form>
+					value={email}
 
-        </div>
-    )
+					onChange={
+						(e) => setEmail(e.target.value)
+					}
+
+					className="login-input"/>
+
+				<input type="password" placeholder="Enter password"
+
+					value={password}
+
+					onChange={
+						(e) => setPassword(e.target.value)
+					}
+
+					className="login-input"/>
+                    
+                     {
+				error && <p className="login-error">
+					{error} </p>
+			}
+
+				<button type="submit" className="login-button">
+					Login
+				</button>
+
+			</form>
+
+		</div>
+	)
 }
 
 export default LoginPage
