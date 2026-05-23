@@ -1,8 +1,10 @@
 import {useEffect, useState} from "react"
+import {toast} from "react-toastify"
 import Navbar from "../components/Navbar"
 import "../style/ProductsPage.css"
 function ProductsPage() {
 
+	const [loading, setLoading] = useState(true)
 	const [products, setProducts] = useState([])
 
 	useEffect(() => {
@@ -26,6 +28,7 @@ function ProductsPage() {
 			const data = await response.json()
 
 			setProducts(data)
+			setLoading(false)
 
 		} catch (error) {
 
@@ -52,14 +55,37 @@ function ProductsPage() {
 				)
 			})
 
+			if (! response.ok) {
+
+				toast.error("Only users can add items to cart")
+
+				return
+			}
+
 			const data = await response.text()
 
-			alert(data)
+			toast.success(data)
 
 		} catch (error) {
 
-			console.error(error)
+			toast.error("Something went wrong")
 		}
+	}
+
+	if (loading) {
+
+		return (
+
+			<div>
+
+				<Navbar/>
+
+				<h2>
+					Loading products...
+				</h2>
+
+			</div>
+		)
 	}
 
 	return (

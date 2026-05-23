@@ -13,7 +13,7 @@ function LoginPage() {
 	const [password, setPassword] = useState("")
 
 	const [error, setError] = useState("")
-
+	const [loading, setLoading] = useState(false)
 	const handleLogin = async (e) => {
 
 		e.preventDefault()
@@ -28,6 +28,7 @@ function LoginPage() {
 
 			}
 			setError("")
+			setLoading(true)
 
 			const response = await fetch("http://localhost:8080/auth/login", {
 				method: "POST",
@@ -51,15 +52,16 @@ function LoginPage() {
 			}
 
 			localStorage.setItem("token", data)
-
+			setLoading(false)
 			navigate("/products")
 
 		} catch (error) {
-
+			setLoading(false)
 			console.error(error)
 		}
-	}
 
+	}
+	
 	return (
 
 		<div className="login-container">
@@ -89,16 +91,15 @@ function LoginPage() {
 						(e) => setPassword(e.target.value)
 					}
 
-					className="login-input"/>
-                    
-                     {
+					className="login-input"/> {
 				error && <p className="login-error">
 					{error} </p>
 			}
 
 				<button type="submit" className="login-button">
-					Login
-				</button>
+					{
+					loading ? "Logging in..." : "Login"
+				} </button>
 
 			</form>
 

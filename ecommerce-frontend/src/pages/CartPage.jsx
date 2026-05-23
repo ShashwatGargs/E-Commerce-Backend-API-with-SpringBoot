@@ -1,148 +1,194 @@
-import {useEffect, useState} from "react"
+import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 
 import Navbar from "../components/Navbar"
 import "../style/CartPage.css"
 
 function CartPage() {
 
-	const [cartItems, setCartItems] = useState([])
+    const [cartItems, setCartItems] = useState([])
+    const [loading, setLoading] = useState(true)
 
-	useEffect(() => {
+    useEffect(() => {
+        fetchCart()
+    }, [])
 
-		fetchCart()
+    const fetchCart = async () => {
 
-	}, [])
+        try {
 
-	const fetchCart = async () => {
+            const token = localStorage.getItem("token")
 
-		try {
+            const response = await fetch("http://localhost:8080/cart", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
 
-			const token = localStorage.getItem("token")
+            if (!response.ok) {
+                toast.error("Only users can access cart")
+                return
+            }
 
-			const response = await fetch("http://localhost:8080/cart", {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
+            const data = await response.json()
+            setCartItems(data)
 
-			const data = await response.json()
+        } catch (error) {
 
-			setCartItems(data)
+            toast.error("Failed to load cart")
 
-		} catch (error) {
+        } finally {
 
-			console.error(error)
-		}
-	}
-	const removeFromCart = async (id) => {
+            setLoading(false)
+        }
+    }
 
-		try {
+    const removeFromCart = async (id) => {
 
-			const token = localStorage.getItem("token")
+        try {
 
-			await fetch(`http://localhost:8080/cart/${id}`, {
-				method: "DELETE",
+            const token = localStorage.getItem("token")
 
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
+            const response = await fetch(`http://localhost:8080/cart/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
 
-			fetchCart()
+            if (!response.ok) {
+                toast.error("Failed to remove item")
+                return
+            }
 
-		} catch (error) {
+            toast.success("Item removed")
+            fetchCart()
 
-			console.error(error)
-		}
-	}
-	const placeOrder = async () => {
+        } catch (error) {
 
-		try {
+            toast.error("Something went wrong")
+        }
+    }
 
-			const token = localStorage.getItem("token")
+    const placeOrder = async () => {
 
-			const response = await fetch("http://localhost:8080/orders", {
-				method: "POST",
+        if (cartItems.length === 0) {
+            toast.warning("Cart is empty")
+            return
+        }
 
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
+        try {
 
-			const data = await response.text()
+            const token = localStorage.getItem("token")
 
-			alert(data)
+            const response = await fetch("http://localhost:8080/orders", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
 
-			fetchCart()
+            if (!response.ok) {
+                toast.error("Only users can place orders")
+                return
+            }
 
-		} catch (error) {
+            const data = await response.text()
 
-			console.error(error)
-		}
-	}
+            toast.success(data)
 
-	return (
+            fetchCart()
 
-		<div>
+        } catch (error) {
 
-			<Navbar/>
+            toast.error("Something went wrong")
+        }
+    }
 
-			<div className="cart-container">
+    if (loading) {
 
-				<h2 className="cart-title">
-					Cart
-				</h2>
+        return (
+            <div>
+                <Navbar />
+                <h2>Loading cart...</h2>
+            </div>
+        )
+    }
 
-				<button onClick={placeOrder}
+    return (
 
-					className="place-order-button">
-					Place Order
-				</button>
+        <div>
 
-				<div className="cart-grid">
+            <Navbar />
 
-					{
-					cartItems.map((item) => (
+            <div className="cart-container">
 
-						<div key={
-								item.id
-							}
+                <h2 className="cart-title">
+                    Cart
+                </h2>
 
-							className="cart-card">
+                <button
+                    onClick={placeOrder}
+                    className="place-order-button"
+                    disabled={cartItems.length === 0}
+                >
+                    Place Order
+                </button>
 
-							<h3 className="cart-product-name">
-								{
-								item.product.name
-							} </h3>
+                {
+                    cartItems.length === 0 ? (
 
-							<p>
-								Quantity: {
-								item.quantity
-							} </p>
+                        <div className="empty-cart">
 
-							<p className="
-									                                    cart-product-price
-									                                ">
-								₹ {
-								item.product.price
-							} </p>
+                            <h3>Your cart is empty</h3>
 
-							<button className="remove-button"
+                            <p>Add products to place orders</p>
 
-								onClick={
-									() => removeFromCart(item.id)
-							}>
-								Remove
-							</button>
+                        </div>
 
-						</div>
-					))
-				} </div>
+                    ) : (
 
-			</div>
+                        <div className="cart-grid">
 
-		</div>
-	)
+                            {
+                                cartItems.map((item) => (
+
+                                    <div
+                                        key={item.id}
+                                        className="cart-card"
+                                    >
+
+                                        <h3 className="cart-product-name">
+                                            {item.product.name}
+                                        </h3>
+
+                                        <p>
+                                            Quantity: {item.quantity}
+                                        </p>
+
+                                        <p className="cart-product-price">
+                                            ₹ {item.product.price}
+                                        </p>
+
+                                        <button
+                                            className="remove-button"
+                                            onClick={() => removeFromCart(item.id)}
+                                        >
+                                            Remove
+                                        </button>
+
+                                    </div>
+                                ))
+                            }
+
+                        </div>
+                    )
+                }
+
+            </div>
+
+        </div>
+    )
 }
 
 export default CartPage
