@@ -111,6 +111,16 @@ function ProductsPage() {
 
 							className="product-card">
 
+							<img src={
+									product.imageUrl
+								}
+
+								alt={
+									product.name
+								}
+
+								className="product-image"/>
+
 							<h3 className="product-name">
 								{
 								product.name
