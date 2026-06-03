@@ -10,6 +10,10 @@ public class ProductResponseDTO {
 
     private String description;
 
+    private String imageUrl;
+
+
+
     public ProductResponseDTO() {
     }
 
@@ -17,12 +21,14 @@ public class ProductResponseDTO {
             Long id,
             String name,
             double price,
-            String description
+            String description,
+            String imageUrl
     ) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -55,5 +61,12 @@ public class ProductResponseDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+        public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

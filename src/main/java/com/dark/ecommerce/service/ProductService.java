@@ -96,7 +96,8 @@ public class ProductService {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                product.getDescription()
+                product.getDescription(),
+                product.getImageUrl()
         );
     }
 

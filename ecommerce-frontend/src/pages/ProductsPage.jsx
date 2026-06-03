@@ -6,6 +6,7 @@ function ProductsPage() {
 
 	const [loading, setLoading] = useState(true)
 	const [products, setProducts] = useState([])
+	const [searchTerm, setSearchTerm] = useState("")
 
 	useEffect(() => {
 
@@ -71,6 +72,7 @@ function ProductsPage() {
 			toast.error("Something went wrong")
 		}
 	}
+	const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
 	if (loading) {
 
@@ -100,10 +102,23 @@ function ProductsPage() {
 					Products
 				</h2>
 
+				<input type="text" placeholder="Search products..."
+					value={searchTerm}
+					onChange={
+						(e) => setSearchTerm(e.target.value)
+					}
+					className="search-input"/> {
+				filteredProducts.length === 0 && (
+					<h3>
+						No products found
+					</h3>
+				)
+			}
+
 				<div className="products-grid">
 
 					{
-					products.map((product) => (
+					filteredProducts.map((product) => (
 
 						<div key={
 								product.id
