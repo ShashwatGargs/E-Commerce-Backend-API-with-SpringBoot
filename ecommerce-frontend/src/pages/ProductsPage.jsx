@@ -7,6 +7,7 @@ function ProductsPage() {
 	const [loading, setLoading] = useState(true)
 	const [products, setProducts] = useState([])
 	const [searchTerm, setSearchTerm] = useState("")
+	const [selectedCategory, setSelectedCategory] = useState("All");
 
 	useEffect(() => {
 
@@ -25,10 +26,11 @@ function ProductsPage() {
 					Authorization: `Bearer ${token}`
 				}
 			})
+			const data = await response.json();
 
-			const data = await response.json()
+			console.log("PRODUCTS:", data);
 
-			setProducts(data)
+			setProducts(data);
 			setLoading(false)
 
 		} catch (error) {
@@ -72,8 +74,15 @@ function ProductsPage() {
 			toast.error("Something went wrong")
 		}
 	}
-	const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
+	const filteredProducts = products.filter(product => {
+
+		const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+		const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+
+		return matchesSearch && matchesCategory;
+	});
 	if (loading) {
 
 		return (
@@ -102,16 +111,29 @@ function ProductsPage() {
 					Products
 				</h2>
 
-				<input type="text" placeholder="Search products..."
-					value={searchTerm}
-					onChange={
-						(e) => setSearchTerm(e.target.value)
-					}
-					className="search-input"/> {
+				<div className="filter-bar">
+
+					<select value={selectedCategory}
+						onChange={
+							(e) => setSelectedCategory(e.target.value)
+						}
+						className="category-select">
+						<option>All</option>
+						<option>Electronics</option>
+						<option>Beauty</option>
+						<option>Books</option>
+					</select>
+
+					<input type="text" placeholder="Search products..."
+						value={searchTerm}
+						onChange={
+							(e) => setSearchTerm(e.target.value)
+						}
+						className="search-input"/>
+				</div>
+				{
 				filteredProducts.length === 0 && (
-					<h3>
-						No products found
-					</h3>
+					<h3>No products found</h3>
 				)
 			}
 
@@ -135,7 +157,10 @@ function ProductsPage() {
 								}
 
 								className="product-image"/>
-
+							<p className="product-category">
+								{
+								product.category
+							} </p>
 							<h3 className="product-name">
 								{
 								product.name

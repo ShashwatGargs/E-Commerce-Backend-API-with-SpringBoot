@@ -92,14 +92,15 @@ public class ProductService {
 
     private ProductResponseDTO mapToResponseDTO(Product product) {
 
-        return new ProductResponseDTO(
-                product.getId(),
-                product.getName(),
-                product.getPrice(),
-                product.getDescription(),
-                product.getImageUrl()
-        );
-    }
+    return new ProductResponseDTO(
+            product.getId(),
+            product.getName(),
+            product.getPrice(),
+            product.getCategory(),
+            product.getDescription(),
+            product.getImageUrl()
+    );
+}
 
     //For Pagination (Search + Pagination)
     public Page<Product> searchProducts(String keyword,int page,int size){

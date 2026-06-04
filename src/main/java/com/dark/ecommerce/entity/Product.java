@@ -22,6 +22,8 @@ public class Product {
 
     private String name;
 
+    private String category;
+    
     private double price;
 
     private String imageUrl;
@@ -82,6 +84,14 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
 }

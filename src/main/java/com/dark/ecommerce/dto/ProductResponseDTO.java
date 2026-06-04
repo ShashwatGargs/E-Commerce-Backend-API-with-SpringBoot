@@ -10,6 +10,16 @@ public class ProductResponseDTO {
 
     private String description;
 
+    private String category;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     private String imageUrl;
 
 
@@ -21,6 +31,7 @@ public class ProductResponseDTO {
             Long id,
             String name,
             double price,
+            String category,
             String description,
             String imageUrl
     ) {
@@ -29,6 +40,7 @@ public class ProductResponseDTO {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.category = category;
     }
 
     public Long getId() {
