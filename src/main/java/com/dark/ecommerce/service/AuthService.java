@@ -1,12 +1,15 @@
 package com.dark.ecommerce.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.dark.ecommerce.dto.LoginRequestDTO;
+import com.dark.ecommerce.dto.LoginResponseDTO;
 import com.dark.ecommerce.dto.RegisterRequestDTO;
 import com.dark.ecommerce.entity.User;
 import com.dark.ecommerce.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import com.dark.ecommerce.security.JwtService;
+
 /*
   Service class responsible for authentication logic.
   Handles user registration, password encryption,
@@ -51,13 +54,16 @@ public class AuthService {
         return "User registered successfully";
     }
 
-    public String login(LoginRequestDTO dto) {
+    public LoginResponseDTO login(LoginRequestDTO dto) {
 
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElse(null);
 
         if (user == null) {
-            return "Invalid email";
+            return new LoginResponseDTO(
+                    null,
+                    null,
+                    "Invalid email");
         }
 
         boolean passwordMatches = passwordEncoder.matches(
@@ -65,9 +71,17 @@ public class AuthService {
                 user.getPassword());
 
         if (!passwordMatches) {
-            return "Invalid password";
+            return new LoginResponseDTO(
+                    null,
+                    null,
+                    "Invalid password");
         }
 
-        return jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user.getEmail());
+
+        return new LoginResponseDTO(
+                token,
+                user.getRole(),
+                null);
     }
 }

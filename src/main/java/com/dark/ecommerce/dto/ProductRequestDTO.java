@@ -2,6 +2,7 @@ package com.dark.ecommerce.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+
 /*
   DTO used for transferring product data between
   client requests/responses and backend services.
@@ -16,19 +17,43 @@ public class ProductRequestDTO {
     private double price;
 
     @NotBlank(message = "Description cannot be empty")
+    
     private String description;
 
-    public ProductRequestDTO() {
-    }
+    private String category;
 
     public ProductRequestDTO(
             String name,
             double price,
-            String description
-    ) {
+            String description,
+            String category,
+            String imageUrl) {
         this.name = name;
         this.price = price;
         this.description = description;
+        this.category = category;
+        this.imageUrl = imageUrl;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    private String imageUrl;
+
+    public ProductRequestDTO() {
     }
 
     public String getName() {
@@ -54,4 +79,4 @@ public class ProductRequestDTO {
     public void setDescription(String description) {
         this.description = description;
     }
-} 
+}

@@ -42,26 +42,25 @@ function LoginPage() {
 				)
 			})
 
-			const data = await response.text()
+			const data = await response.json()
 
-			if (data === "Invalid email" || data === "Invalid password") {
-
-				setError(data)
-
-				return
+			if (data.message) {
+				setError(data.message);
+				setLoading(false);
+				return;
 			}
 
-			localStorage.setItem("token", data)
-			setLoading(false)
-			navigate("/products")
+			localStorage.setItem("token", data.token);
+			localStorage.setItem("role", data.role);
 
+			navigate("/products");
 		} catch (error) {
 			setLoading(false)
 			console.error(error)
 		}
 
 	}
-	
+
 	return (
 
 		<div className="login-container">

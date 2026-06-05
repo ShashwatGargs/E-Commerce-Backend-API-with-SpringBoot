@@ -4,6 +4,7 @@ import com.dark.ecommerce.dto.LoginRequestDTO;
 import com.dark.ecommerce.dto.RegisterRequestDTO;
 import com.dark.ecommerce.service.AuthService;
 import org.springframework.web.bind.annotation.*;
+import com.dark.ecommerce.dto.LoginResponseDTO;
 /*
   REST controller responsible for authentication APIs.
   Handles user registration and login requests
@@ -28,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(
+    public LoginResponseDTO login(
             @RequestBody LoginRequestDTO dto
     ) {
 

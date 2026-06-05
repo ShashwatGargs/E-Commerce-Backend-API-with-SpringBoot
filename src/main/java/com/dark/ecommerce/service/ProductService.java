@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+
 /*
   Service class containing business logic for product management.
   Handles product creation, retrieval, updating, and deletion
@@ -32,6 +33,8 @@ public class ProductService {
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setDescription(dto.getDescription());
+        product.setCategory(dto.getCategory());
+        product.setImageUrl(dto.getImageUrl());
 
         Product savedProduct = productRepository.save(product);
 
@@ -49,28 +52,25 @@ public class ProductService {
     public ProductResponseDTO getProductById(Long id) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new ProductNotFoundException(
-                                "Product not found with ID: " + id
-                        ));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product not found with ID: " + id));
 
         return mapToResponseDTO(product);
     }
 
     public ProductResponseDTO updateProduct(
             Long id,
-            ProductRequestDTO dto
-    ) {
+            ProductRequestDTO dto) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new ProductNotFoundException(
-                                "Product not found with ID: " + id
-                        ));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product not found with ID: " + id));
 
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setDescription(dto.getDescription());
+        product.setCategory(dto.getCategory());
+        product.setImageUrl(dto.getImageUrl());
 
         Product updatedProduct = productRepository.save(product);
 
@@ -80,10 +80,8 @@ public class ProductService {
     public String deleteProduct(Long id) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new ProductNotFoundException(
-                                "Product not found with ID: " + id
-                        ));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product not found with ID: " + id));
 
         productRepository.delete(product);
 
@@ -92,24 +90,23 @@ public class ProductService {
 
     private ProductResponseDTO mapToResponseDTO(Product product) {
 
-    return new ProductResponseDTO(
-            product.getId(),
-            product.getName(),
-            product.getPrice(),
-            product.getCategory(),
-            product.getDescription(),
-            product.getImageUrl()
-    );
-}
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getCategory(),
+                product.getDescription(),
+                product.getImageUrl());
+    }
 
-    //For Pagination (Search + Pagination)
-    public Page<Product> searchProducts(String keyword,int page,int size){
+    // For Pagination (Search + Pagination)
+    public Page<Product> searchProducts(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
     }
 
-    //For Pagination Only
-    public Page<Product> getProductPaginated(int page, int size){
+    // For Pagination Only
+    public Page<Product> getProductPaginated(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable);
     }
