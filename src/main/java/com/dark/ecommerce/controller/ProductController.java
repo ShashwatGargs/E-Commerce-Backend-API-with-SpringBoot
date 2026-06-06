@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Page;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/products")
@@ -64,7 +61,7 @@ public class ProductController {
         return productService.deleteProduct(id);
     }
 
-    //Pagination
+    // Pagination
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/paginated")
     public Page<Product> getProductsPaginated(
@@ -73,14 +70,30 @@ public class ProductController {
         return productService.getProductPaginated(page, size);
     }
 
-    //search
+    // search
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/search")
     public Page<Product> searchProducts(@RequestParam String keyword,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size
-    ) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
         return productService.searchProducts(keyword, page, size);
     }
-    
+
+    // Restore
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/archived")
+    public List<ProductResponseDTO> getArchivedProducts() {
+
+        return productService.getArchivedProducts();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/restore/{id}")
+    public String restoreProduct(
+            @PathVariable Long id) {
+
+        return productService.restoreProduct(id);
+    }
+
 }

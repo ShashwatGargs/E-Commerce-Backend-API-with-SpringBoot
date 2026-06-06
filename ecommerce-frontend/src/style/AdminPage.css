@@ -29,3 +29,59 @@
 .add-product-button {
     margin-bottom: 20px;
 }
+.archived-button {
+    margin-left: 10px;
+}
+
+.archived-modal {
+    background: white;
+
+    width: 700px;
+    max-width: 90%;
+
+    max-height: 80vh;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.archived-list {
+    overflow-y: auto;
+
+    margin-top: 20px;
+
+    max-height: 60vh;
+}
+
+.archived-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px;
+
+    border-bottom: 1px solid #ddd;
+}
+
+.close-button {
+    border: none;
+    background: none;
+
+    font-size: 20px;
+    cursor: pointer;
+}
+.admin-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}

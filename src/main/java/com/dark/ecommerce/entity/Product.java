@@ -23,12 +23,14 @@ public class Product {
     private String name;
 
     private String category;
-    
+
     private double price;
 
     private String imageUrl;
 
     private String description;
+
+    private boolean active = true;
 
     public Product() {
     }
@@ -94,4 +96,11 @@ public class Product {
         this.category = category;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

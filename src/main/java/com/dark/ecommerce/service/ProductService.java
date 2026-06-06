@@ -35,6 +35,7 @@ public class ProductService {
         product.setDescription(dto.getDescription());
         product.setCategory(dto.getCategory());
         product.setImageUrl(dto.getImageUrl());
+        product.setActive(true);
 
         Product savedProduct = productRepository.save(product);
 
@@ -43,17 +44,43 @@ public class ProductService {
 
     public List<ProductResponseDTO> getAllProducts() {
 
-        return productRepository.findAll()
+        return productRepository.findByActiveTrue()
                 .stream()
                 .map(this::mapToResponseDTO)
                 .toList();
+    }
+
+    public List<ProductResponseDTO> getArchivedProducts() {
+
+        return productRepository.findByActiveFalse()
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
+
+    public String restoreProduct(Long id) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Product not found"));
+
+        product.setActive(true);
+
+        productRepository.save(product);
+
+        return "Product restored";
     }
 
     public ProductResponseDTO getProductById(Long id) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(
-                        "Product not found with ID: " + id));
+                        "Product not found"));
+
+        if (!product.isActive()) {
+            throw new ProductNotFoundException(
+                    "Product not found");
+        }
 
         return mapToResponseDTO(product);
     }
@@ -83,9 +110,11 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(
                         "Product not found with ID: " + id));
 
-        productRepository.delete(product);
+        product.setActive(false);
 
-        return "Product deleted successfully";
+        productRepository.save(product);
+
+        return "Product archived successfully";
     }
 
     private ProductResponseDTO mapToResponseDTO(Product product) {

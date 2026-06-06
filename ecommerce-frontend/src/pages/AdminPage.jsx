@@ -1,352 +1,508 @@
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import {useEffect, useState} from "react";
+import {toast} from "react-toastify";
 import Navbar from "../components/Navbar";
 import "../style/AdminPage.css";
 
 function AdminPage() {
-    const [products, setProducts] = useState([]);
+	const [products, setProducts] = useState([]);
 
-    const [name, setName] = useState("");
-    const [price, setPrice] = useState("");
-    const [description, setDescription] = useState("");
-    const [category, setCategory] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
+	const [name, setName] = useState("");
+	const [price, setPrice] = useState("");
+	const [description, setDescription] = useState("");
+	const [category, setCategory] = useState("");
+	const [imageUrl, setImageUrl] = useState("");
+	const [archivedProducts, setArchivedProducts] = useState([]);
 
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-    const [newCategory, setNewCategory] = useState("");
+	const [showAddModal, setShowAddModal] = useState(false);
+	const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+	const [newCategory, setNewCategory] = useState("");
+	const [editingProductId, setEditingProductId] = useState(null);
+	const [isEditing, setIsEditing] = useState(false);
+	const [showArchivedModal, setShowArchivedModal] = useState(false);
 
-    const categories = [
-        ...new Set(
-            products
-                .map((product) => product.category)
-                .filter(Boolean)
-        ),
-    ];
+	const categories = [
+		...new Set(products.map((product) => product.category).filter(Boolean)),
+	];
 
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+	useEffect(() => {
+		fetchProducts();
+	}, []);
 
-    const clearForm = () => {
-        setName("");
-        setPrice("");
-        setDescription("");
-        setCategory("");
-        setImageUrl("");
-        setNewCategory("");
-        setShowNewCategoryInput(false);
-    };
+	const clearForm = () => {
 
-    const fetchProducts = async () => {
-        try {
-            const token = localStorage.getItem("token");
+		setName("");
+		setPrice("");
+		setDescription("");
+		setCategory("");
+		setImageUrl("");
 
-            const response = await fetch(
-                "http://localhost:8080/products",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+		setNewCategory("");
 
-            if (!response.ok) {
-                throw new Error();
-            }
+		setShowNewCategoryInput(false);
 
-            const data = await response.json();
-            setProducts(data);
-        } catch {
-            toast.error("Failed to load products");
-        }
-    };
+		setEditingProductId(null);
 
-    const createProduct = async () => {
-        try {
-            const token = localStorage.getItem("token");
+		setIsEditing(false);
+	};
+	const openEditModal = (product) => {
 
-            const response = await fetch(
-                "http://localhost:8080/products",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                        name,
-                        price: Number(price),
-                        description,
-                        category,
-                        imageUrl,
-                    }),
-                }
-            );
+		setIsEditing(true);
 
-            if (!response.ok) {
-                toast.error("Failed to create product");
-                return;
-            }
+		setEditingProductId(product.id);
 
-            toast.success("Product created");
+		setName(product.name);
+		setPrice(product.price);
+		setDescription(product.description);
+		setCategory(product.category);
+		setImageUrl(product.imageUrl || "");
 
-            clearForm();
-            setShowAddModal(false);
+		setShowAddModal(true);
+	};
+	const fetchProducts = async () => {
+		try {
+			const token = localStorage.getItem("token");
 
-            fetchProducts();
-        } catch {
-            toast.error("Something went wrong");
-        }
-    };
+			const response = await fetch("http://localhost:8080/products", {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
 
-    const deleteProduct = async (id) => {
-        try {
-            const token = localStorage.getItem("token");
+			if (! response.ok) {
+				throw new Error();
+			}
 
-            const response = await fetch(
-                `http://localhost:8080/products/${id}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+			const data = await response.json();
+			setProducts(data);
+		} catch {
+			toast.error("Failed to load products");
+		}};
 
-            if (!response.ok) {
-                toast.error("Failed to delete product");
-                return;
-            }
+	const createProduct = async () => {
+		try {
+			const token = localStorage.getItem("token");
 
-            toast.success("Product deleted");
+			const response = await fetch("http://localhost:8080/products", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				},
+				body: JSON.stringify(
+					{
+						name,
+						price: Number(price),
+						description,
+						category,
+						imageUrl
+					}
+				)
+			});
 
-            fetchProducts();
-        } catch {
-            toast.error("Something went wrong");
-        }
-    };
+			if (! response.ok) {
+				toast.error("Failed to create product");
+				return;
+			}
 
-    return (
-        <div>
-            <Navbar />
+			toast.success("Product created");
 
-            <div className="products-container">
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "20px",
-                    }}
-                >
-                    <h2>Admin Dashboard</h2>
+			clearForm();
+			setShowAddModal(false);
 
-                    <button
-                        className="add-product-button"
-                        onClick={() => setShowAddModal(true)}
-                    >
-                        + Add Product
-                    </button>
-                </div>
+			fetchProducts();
+		} catch {
+			toast.error("Something went wrong");
+		}};
 
-                {products.length === 0 ? (
-                    <p>No products found.</p>
-                ) : (
-                    products.map((product) => (
-                        <div
-                            key={product.id}
-                            className="product-card"
-                        >
-                            <h3>{product.name}</h3>
+	const updateProduct = async () => {
 
-                            <p>{product.category}</p>
+		try {
 
-                            <p>₹ {product.price}</p>
+			const token = localStorage.getItem("token");
 
-                            {product.imageUrl && (
-                                <img
-                                    src={product.imageUrl}
-                                    alt={product.name}
-                                    style={{
-                                        width: "120px",
-                                        height: "120px",
-                                        objectFit: "cover",
-                                    }}
-                                />
-                            )}
+			const response = await fetch(`http://localhost:8080/products/${editingProductId}`, {
+				method: "PUT",
 
-                            <div
-                                style={{
-                                    display: "flex",
-                                    gap: "10px",
-                                    marginTop: "10px",
-                                }}
-                            >
-                                <button>Edit</button>
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				},
 
-                                <button
-                                    onClick={() =>
-                                        deleteProduct(product.id)
-                                    }
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
+				body: JSON.stringify(
+					{
+						name,
+						price: Number(price),
+						description,
+						category,
+						imageUrl
+					}
+				)
+			});
 
-            {showAddModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Add Product</h2>
+			if (! response.ok) {
 
-                        <input
-                            type="text"
-                            placeholder="Product Name"
-                            value={name}
-                            onChange={(e) =>
-                                setName(e.target.value)
-                            }
-                        />
+				toast.error("Failed to update product");
 
-                        <input
-                            type="number"
-                            placeholder="Price"
-                            value={price}
-                            onChange={(e) =>
-                                setPrice(e.target.value)
-                            }
-                        />
+				return;
+			}
 
-                        <select
-                            value={category}
-                            onChange={(e) =>
-                                setCategory(e.target.value)
-                            }
-                        >
-                            <option value="">
-                                Select Category
-                            </option>
+			toast.success("Product updated");
 
-                            {categories.map((cat) => (
-                                <option
-                                    key={cat}
-                                    value={cat}
-                                >
-                                    {cat}
-                                </option>
-                            ))}
-                        </select>
+			clearForm();
 
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setShowNewCategoryInput(
-                                    !showNewCategoryInput
-                                )
-                            }
-                        >
-                            + New Category
-                        </button>
+			setShowAddModal(false);
 
-                        {showNewCategoryInput && (
-                            <div
-                                style={{
-                                    marginTop: "10px",
-                                }}
-                            >
-                                <input
-                                    type="text"
-                                    placeholder="New Category"
-                                    value={newCategory}
-                                    onChange={(e) =>
-                                        setNewCategory(
-                                            e.target.value
-                                        )
-                                    }
-                                />
+			setIsEditing(false);
 
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (
-                                            !newCategory.trim()
-                                        ) {
-                                            toast.error(
-                                                "Enter category name"
-                                            );
-                                            return;
-                                        }
+			fetchProducts();
 
-                                        setCategory(
-                                            newCategory.trim()
-                                        );
+		} catch {
 
-                                        setShowNewCategoryInput(
-                                            false
-                                        );
+			toast.error("Something went wrong");
+		}};
 
-                                        setNewCategory("");
-                                    }}
-                                >
-                                    Save Category
-                                </button>
-                            </div>
-                        )}
+	const deleteProduct = async (id) => {
+		try {
+			const token = localStorage.getItem("token");
 
-                        <textarea
-                            placeholder="Description"
-                            value={description}
-                            onChange={(e) =>
-                                setDescription(
-                                    e.target.value
-                                )
-                            }
-                        />
+			const response = await fetch(`http://localhost:8080/products/${id}`, {
+				method: "DELETE",
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
 
-                        <input
-                            type="text"
-                            placeholder="Image URL"
-                            value={imageUrl}
-                            onChange={(e) =>
-                                setImageUrl(
-                                    e.target.value
-                                )
-                            }
-                        />
+			if (! response.ok) {
+				toast.error("Failed to delete product");
+				return;
+			}
 
-                        <div
-                            style={{
-                                display: "flex",
-                                gap: "10px",
-                                marginTop: "20px",
-                            }}
-                        >
-                            <button
-                                onClick={createProduct}
-                            >
-                                Create Product
-                            </button>
+			toast.success("Product deleted");
 
-                            <button
-                                onClick={() => {
-                                    clearForm();
-                                    setShowAddModal(
-                                        false
-                                    );
-                                }}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+			fetchProducts();
+		} catch {
+			toast.error("Something went wrong");
+		}};
+
+	const fetchArchivedProducts = async () => {
+
+		const token = localStorage.getItem("token");
+
+		const response = await fetch("http://localhost:8080/products/archived", {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		});
+
+		const data = await response.json();
+
+		setArchivedProducts(data);
+	};
+	useEffect(() => {
+
+		fetchProducts();
+		fetchArchivedProducts();
+
+	}, []);
+
+
+	const restoreProduct = async (id) => {
+
+		try {
+
+			const token = localStorage.getItem("token");
+
+			await fetch(`http://localhost:8080/products/restore/${id}`, {
+				method: "PUT",
+
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+
+			toast.success("Product restored");
+
+			fetchProducts();
+			fetchArchivedProducts();
+
+		} catch {
+
+			toast.error("Failed to restore product");
+		}};
+
+	return (
+		<div>
+			<Navbar/>
+
+			<div className="products-container">
+				<div style={
+					{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						marginBottom: "20px"
+					}
+				}>
+					<h2>Admin Dashboard</h2>
+
+					<button className="add-product-button"
+						onClick={
+							() => setShowAddModal(true)
+					}>
+						+ Add Product
+					</button>
+
+					<button className="archived-button"
+						onClick={
+							() => setShowArchivedModal(true)
+					}>
+						Archived Items
+					</button>
+				</div>
+
+				{
+				products.length === 0 ? (
+					<p>No products found.</p>
+				) : (products.map((product) => (
+					<div key={
+							product.id
+						}
+						className="product-card">
+						<h3>{
+							product.name
+						}</h3>
+
+						<p>{
+							product.category
+						}</p>
+
+						<p>₹ {
+							product.price
+						}</p>
+
+						{
+						product.imageUrl && (
+							<img src={
+									product.imageUrl
+								}
+								alt={
+									product.name
+								}
+								style={
+									{
+										width: "120px",
+										height: "120px",
+										objectFit: "cover"
+									}
+								}/>
+						)
+					}
+
+						<div style={
+							{
+								display: "flex",
+								gap: "10px",
+								marginTop: "10px"
+							}
+						}>
+							<button onClick={
+								() => openEditModal(product)
+							}>
+								Edit
+							</button>
+
+							<button onClick={
+								() => deleteProduct(product.id)
+							}>
+								Archive
+							</button>
+						</div>
+					</div>
+				)))
+			} </div>
+
+
+			{
+			showAddModal && (
+				<div className="modal-overlay">
+					<div className="modal-content">
+						<h2> {
+							isEditing ? "Edit Product" : "Add Product"
+						} </h2>
+
+						<input type="text" placeholder="Product Name"
+							value={name}
+							onChange={
+								(e) => setName(e.target.value)
+							}/>
+
+						<input type="number" placeholder="Price"
+							value={price}
+							onChange={
+								(e) => setPrice(e.target.value)
+							}/>
+
+						<select value={category}
+							onChange={
+								(e) => setCategory(e.target.value)
+						}>
+							<option value="">
+								Select Category
+							</option>
+
+							{
+							categories.map((cat) => (
+								<option key={cat}
+									value={cat}>
+									{cat} </option>
+							))
+						} </select>
+
+						<button type="button"
+							onClick={
+								() => setShowNewCategoryInput(!showNewCategoryInput)
+						}>
+							+ New Category
+						</button>
+
+						{
+						showNewCategoryInput && (
+							<div style={
+								{marginTop: "10px"}
+							}>
+								<input type="text" placeholder="New Category"
+									value={newCategory}
+									onChange={
+										(e) => setNewCategory(e.target.value)
+									}/>
+
+								<button type="button"
+									onClick={
+										() => {
+											if (!newCategory.trim()) {
+												toast.error("Enter category name");
+												return;
+											}
+
+											setCategory(newCategory.trim());
+
+											setShowNewCategoryInput(false);
+
+											setNewCategory("");
+										}
+								}>
+									Save Category
+								</button>
+							</div>
+						)
+					}
+
+						<textarea placeholder="Description"
+							value={description}
+							onChange={
+								(e) => setDescription(e.target.value)
+							}/>
+
+						<input type="text" placeholder="Image URL"
+							value={imageUrl}
+							onChange={
+								(e) => setImageUrl(e.target.value)
+							}/>
+
+						<div style={
+							{
+								display: "flex",
+								gap: "10px",
+								marginTop: "20px"
+							}
+						}>
+							<button onClick={
+								isEditing ? updateProduct : createProduct
+							}>
+								{
+								isEditing ? "Save Changes" : "Create Product"
+							} </button>
+							<button onClick={
+								() => {
+									clearForm();
+									setShowAddModal(false);
+								}
+							}>
+								Cancel
+							</button>
+						</div>
+					</div>
+				</div>
+			)
+		}
+			{
+			showArchivedModal && (
+
+				<div className="modal-overlay">
+
+					<div className="modal-content archived-modal">
+
+						<div className="modal-header">
+
+							<h2>Archived Products</h2>
+
+							<button className="close-button"
+								onClick={
+									() => setShowArchivedModal(false)
+							}>
+								✕
+							</button>
+
+						</div>
+
+						<div className="archived-list">
+
+							{
+							archivedProducts.length === 0 ? (
+								<p>No archived products</p>
+							) : (archivedProducts.map(product => (
+
+								<div key={
+										product.id
+									}
+									className="archived-item">
+
+									<div>
+
+										<h4>{
+											product.name
+										}</h4>
+
+										<p>{
+											product.category
+										}</p>
+
+										<p>₹{
+											product.price
+										}</p>
+
+									</div>
+
+									<button onClick={
+										() => restoreProduct(product.id)
+									}>
+										Restore
+									</button>
+
+								</div>
+
+							)))
+						} </div>
+
+					</div>
+
+				</div>
+
+			)
+		} </div>
+
+
+	);
 }
 
 export default AdminPage;
