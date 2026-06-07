@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import "../style/Navbar.css";
 
 function Navbar() {
@@ -17,33 +17,44 @@ function Navbar() {
 			</div>
 
 			<div className="navbar-buttons">
-				<button
-					className="navbar-button"
-					onClick={() => navigate("/products")}
-				>
+				<button className="navbar-button"
+					onClick={
+						() => navigate("/products")
+				}>
 					Products
 				</button>
 
-				<button
-					className="navbar-button"
-					onClick={() => navigate("/cart")}
-				>
+				<button className="navbar-button"
+					onClick={
+						() => navigate("/cart")
+				}>
 					Cart
 				</button>
 
-				{role === "ADMIN" && (
-					<button
-						className="navbar-button"
-						onClick={() => navigate("/admin")}
-					>
+				{
+				role === "ADMIN" && (
+					<button className="navbar-button"
+						onClick={
+							() => navigate("/admin")
+					}>
 						Admin
 					</button>
-				)}
+				)
+			}
+				{
+				role === "USER" && (
 
-				<button
-					className="navbar-button"
-					onClick={handleLogout}
-				>
+					<button className="navbar-button"
+						onClick={
+							() => navigate("/orders")
+					}>
+						My Orders
+					</button>
+
+				)
+			}
+				<button className="navbar-button"
+					onClick={handleLogout}>
 					Logout
 				</button>
 			</div>

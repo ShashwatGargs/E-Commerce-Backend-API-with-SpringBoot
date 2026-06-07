@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import CartPage from "./pages/CartPage"
 import 'react-toastify/dist/ReactToastify.css'
 import AdminPage from "./pages/AdminPage";
+import OrdersPage from "./pages/OrdersPage";
 
 function App() {
 
@@ -29,6 +30,9 @@ function App() {
 
 				<Route path="/admin"
 					element={<AdminPage/>}/>
+
+				<Route path="/orders"
+					element={<OrdersPage/>}/>
 
 			</Routes>
 
