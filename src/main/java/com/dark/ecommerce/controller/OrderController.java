@@ -1,5 +1,6 @@
 package com.dark.ecommerce.controller;
 
+import com.dark.ecommerce.dto.OrderHistoryDTO;
 import com.dark.ecommerce.entity.Order;
 import com.dark.ecommerce.service.OrderService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,26 +16,22 @@ public class OrderController {
     private final OrderService orderService;
 
     public OrderController(
-            OrderService orderService
-    ) {
+            OrderService orderService) {
         this.orderService = orderService;
     }
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
     public String placeOrder(
-            Authentication authentication
-    ) {
+            Authentication authentication) {
 
         return orderService.placeOrder(authentication);
     }
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping
-    public List<Order> getOrders(
-            Authentication authentication
-    ) {
-
-        return orderService.getUserOrders(authentication);
+    public List<OrderHistoryDTO> getOrders(
+            Authentication authentication) {
+        return orderService.getOrderHistory(authentication);
     }
 }

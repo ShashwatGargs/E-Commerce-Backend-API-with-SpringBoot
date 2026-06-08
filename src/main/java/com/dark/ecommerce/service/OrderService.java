@@ -5,6 +5,8 @@ import com.dark.ecommerce.repository.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.dark.ecommerce.dto.OrderHistoryDTO;
+import com.dark.ecommerce.dto.OrderItemDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -102,4 +104,41 @@ public class OrderService {
 
         return orderRepository.findByUser(user);
     }
+
+    public List<OrderHistoryDTO> getOrderHistory(
+        Authentication authentication
+) {
+
+    String email = authentication.getName();
+
+    User user = userRepository.findByEmail(email)
+            .orElseThrow();
+
+    List<Order> orders =
+            orderRepository.findByUser(user);
+
+    return orders.stream()
+            .map(order -> {
+
+                List<OrderItemDTO> items =
+                        orderItemRepository.findByOrder(order)
+                                .stream()
+                                .map(item ->
+                                        new OrderItemDTO(
+                                                item.getProduct().getName(),
+                                                item.getQuantity(),
+                                                item.getPrice()
+                                        )
+                                )
+                                .toList();
+
+                return new OrderHistoryDTO(
+                        order.getId(),
+                        order.getOrderDate(),
+                        order.getTotalAmount(),
+                        items
+                );
+            })
+            .toList();
+}
 }

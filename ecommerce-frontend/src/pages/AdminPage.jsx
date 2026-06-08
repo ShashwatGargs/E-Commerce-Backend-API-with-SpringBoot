@@ -19,6 +19,7 @@ function AdminPage() {
 	const [editingProductId, setEditingProductId] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [showArchivedModal, setShowArchivedModal] = useState(false);
+	const [imageFile, setImageFile] = useState(null);
 
 	const categories = [
 		...new Set(products.map((product) => product.category).filter(Boolean)),
@@ -43,6 +44,7 @@ function AdminPage() {
 		setEditingProductId(null);
 
 		setIsEditing(false);
+		setImageFile(null);
 	};
 	const openEditModal = (product) => {
 
@@ -77,11 +79,37 @@ function AdminPage() {
 		} catch {
 			toast.error("Failed to load products");
 		}};
+	const uploadImage = async () => {
+
+		console.log(imageFile);
+
+		if (!imageFile) {
+			return "";
+		}
+
+		const token = localStorage.getItem("token");
+
+		const formData = new FormData();
+
+		formData.append("file", imageFile);
+
+		const response = await fetch("http://localhost:8080/upload", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${token}`
+			},
+			body: formData
+		});
+
+		const result = await response.text();
+
+		return result;
+	};
 
 	const createProduct = async () => {
 		try {
 			const token = localStorage.getItem("token");
-
+			const uploadedImageUrl = await uploadImage();
 			const response = await fetch("http://localhost:8080/products", {
 				method: "POST",
 				headers: {
@@ -94,7 +122,7 @@ function AdminPage() {
 						price: Number(price),
 						description,
 						category,
-						imageUrl
+						imageUrl: uploadedImageUrl
 					}
 				)
 			});
@@ -119,6 +147,7 @@ function AdminPage() {
 		try {
 
 			const token = localStorage.getItem("token");
+			const uploadedImageUrl = await uploadImage();
 
 			const response = await fetch(`http://localhost:8080/products/${editingProductId}`, {
 				method: "PUT",
@@ -134,7 +163,7 @@ function AdminPage() {
 						price: Number(price),
 						description,
 						category,
-						imageUrl
+						imageUrl: uploadedImageUrl
 					}
 				)
 			});
@@ -233,6 +262,7 @@ function AdminPage() {
 	return (
 		<div>
 			<Navbar/>
+
 
 			<div className="products-container">
 				<div style={
@@ -335,7 +365,21 @@ function AdminPage() {
 							onChange={
 								(e) => setName(e.target.value)
 							}/>
+						<label className="upload-button">
+							Choose Image
+							<input type="file" accept="image/*" hidden
+								onChange={
+									(e) => setImageFile(e.target.files[0])
+								}/>
+						</label>
 
+						{
+						imageFile && (
+							<p>{
+								imageFile.name
+							}</p>
+						)
+					}
 						<input type="number" placeholder="Price"
 							value={price}
 							onChange={
@@ -401,12 +445,6 @@ function AdminPage() {
 							value={description}
 							onChange={
 								(e) => setDescription(e.target.value)
-							}/>
-
-						<input type="text" placeholder="Image URL"
-							value={imageUrl}
-							onChange={
-								(e) => setImageUrl(e.target.value)
 							}/>
 
 						<div style={

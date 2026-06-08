@@ -36,8 +36,9 @@ public class SecurityConfig {
         public SecurityFilterChain securityFilterChain(
                         HttpSecurity http) throws Exception {
 
-                http            
-                                .cors(cors -> {})
+                http
+                                .cors(cors -> {
+                                })
 
                                 .csrf(csrf -> csrf.disable())
 
@@ -46,8 +47,11 @@ public class SecurityConfig {
 
                                 .authorizeHttpRequests(auth -> auth
 
+                                                .requestMatchers("/auth/**").permitAll()
+
                                                 .requestMatchers(
-                                                                "/auth/**")
+                                                                org.springframework.http.HttpMethod.GET,
+                                                                "/uploads/**")
                                                 .permitAll()
 
                                                 .anyRequest().authenticated())
