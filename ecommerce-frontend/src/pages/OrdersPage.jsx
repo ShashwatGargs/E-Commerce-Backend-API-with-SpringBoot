@@ -1,144 +1,140 @@
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import {useEffect, useState} from "react";
+import {toast} from "react-toastify";
 import Navbar from "../components/Navbar";
 
-function OrdersPage() {
+function OrdersPage({darkMode, setDarkMode}) {
 
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+	const [orders, setOrders] = useState([]);
+	const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchOrders();
-    }, []);
+	useEffect(() => {
+		fetchOrders();
+	}, []);
 
-    const fetchOrders = async () => {
+	const fetchOrders = async () => {
 
-        try {
+		try {
 
-            const token = localStorage.getItem("token");
+			const token = localStorage.getItem("token");
 
-            const response = await fetch(
-                "http://localhost:8080/orders",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
+			const response = await fetch("http://localhost:8080/orders", {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
 
-            if (!response.ok) {
-                toast.error("Failed to load orders");
-                return;
-            }
+			if (! response.ok) {
+				toast.error("Failed to load orders");
+				return;
+			}
 
-            const data = await response.json();
+			const data = await response.json();
 
-            console.log("ORDERS:", data);
+			console.log("ORDERS:", data);
 
-            setOrders(data);
+			setOrders(data);
 
-        } catch (error) {
+		} catch (error) {
 
-            console.error(error);
-            toast.error("Something went wrong");
+			console.error(error);
+			toast.error("Something went wrong");
 
-        } finally {
+		} finally {
 
-            setLoading(false);
-        }
-    };
+			setLoading(false);
+		}
+	};
 
-    if (loading) {
+	if (loading) {
 
-        return (
-            <div>
-                <Navbar />
-                <h2>Loading orders...</h2>
-            </div>
-        );
-    }
+		return (
+			<div>
+				<Navbar/>
+				<h2>Loading orders...</h2>
+			</div>
+		);
+	}
 
-    return (
+	return (
 
-        <div>
+		<div>
 
-            <Navbar />
+			<Navbar darkMode={darkMode}
+				setDarkMode={setDarkMode}/>
 
-            <div className="products-container">
+			<div className="products-container">
 
-                <h2>My Orders</h2>
+				<h2>My Orders</h2>
 
-                {orders.length === 0 ? (
+				{
+				orders.length === 0 ? (
 
-                    <h3>No orders found</h3>
+					<h3>No orders found</h3>
 
-                ) : (
+				) : (orders.map(order => (
 
-                    orders.map(order => (
+					<div key={
+							order.id
+						}
+						className="product-card"
+						style={
+							{marginBottom: "20px"}
+					}>
 
-                        <div
-                            key={order.id}
-                            className="product-card"
-                            style={{ marginBottom: "20px" }}
-                        >
+						<h3>
+							Order #{
+							order.id
+						} </h3>
 
-                            <h3>
-                                Order #{order.id}
-                            </h3>
+						<p>
+							Date: {" "}
+							{
+							new Date(order.orderDate).toLocaleString()
+						} </p>
 
-                            <p>
-                                Date:
-                                {" "}
-                                {new Date(
-                                    order.orderDate
-                                ).toLocaleString()}
-                            </p>
+						<p>
+							Total: {" "}
+							₹{
+							order.totalAmount
+						} </p>
 
-                            <p>
-                                Total:
-                                {" "}
-                                ₹{order.totalAmount}
-                            </p>
+						<hr/> {
+						order.items ?. map((item, index) => (
 
-                            <hr />
+							<div key={
+								`${
+									order.id
+								}-${index}`
+							}>
 
-                            {order.items?.map((item, index) => (
+								<p>
+									<strong> {
+										item.productName
+									} </strong>
+								</p>
 
-                                <div
-                                    key={`${order.id}-${index}`}
-                                >
+								<p>
+									Quantity: {" "}
+									{
+									item.quantity
+								} </p>
 
-                                    <p>
-                                        <strong>
-                                            {item.productName}
-                                        </strong>
-                                    </p>
+								<p>
+									Price: {" "}
+									₹{
+									item.price
+								} </p>
 
-                                    <p>
-                                        Quantity:
-                                        {" "}
-                                        {item.quantity}
-                                    </p>
+							</div>
 
-                                    <p>
-                                        Price:
-                                        {" "}
-                                        ₹{item.price}
-                                    </p>
+						))
+					} </div>
 
-                                </div>
+				)))
+			} </div>
 
-                            ))}
-
-                        </div>
-
-                    ))
-                )}
-
-            </div>
-
-        </div>
-    );
+		</div>
+	);
 }
 
 export default OrdersPage;

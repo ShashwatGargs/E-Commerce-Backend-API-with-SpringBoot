@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import "../style/Navbar.css";
 
-function Navbar() {
+function Navbar({darkMode, setDarkMode}) {
 	const navigate = useNavigate();
 	const role = localStorage.getItem("role");
 
@@ -30,6 +30,14 @@ function Navbar() {
 				}>
 					Cart
 				</button>
+
+				<button className="theme-toggle"
+					onClick={
+						() => setDarkMode(!darkMode)
+				}>
+					{
+					darkMode ? "☀️" : "🌙"
+				} </button>
 
 				{
 				role === "ADMIN" && (

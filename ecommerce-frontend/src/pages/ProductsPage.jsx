@@ -2,12 +2,13 @@ import {useEffect, useState} from "react"
 import {toast} from "react-toastify"
 import Navbar from "../components/Navbar"
 import "../style/ProductsPage.css"
-function ProductsPage() {
+function ProductsPage({darkMode, setDarkMode}) {
 
 	const [loading, setLoading] = useState(true)
 	const [products, setProducts] = useState([])
 	const [searchTerm, setSearchTerm] = useState("")
 	const [selectedCategory, setSelectedCategory] = useState("All");
+
 
 	useEffect(() => {
 
@@ -102,8 +103,9 @@ function ProductsPage() {
 	return (
 
 		<div>
+			<Navbar darkMode={darkMode}
+				setDarkMode={setDarkMode}/>
 
-			<Navbar/>
 
 			<div className="products-container">
 

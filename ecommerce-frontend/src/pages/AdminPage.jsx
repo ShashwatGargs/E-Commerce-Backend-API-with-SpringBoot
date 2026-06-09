@@ -3,7 +3,7 @@ import {toast} from "react-toastify";
 import Navbar from "../components/Navbar";
 import "../style/AdminPage.css";
 
-function AdminPage() {
+function AdminPage({darkMode, setDarkMode}) {
 	const [products, setProducts] = useState([]);
 
 	const [name, setName] = useState("");
@@ -261,7 +261,8 @@ function AdminPage() {
 
 	return (
 		<div>
-			<Navbar/>
+			<Navbar darkMode={darkMode}
+				setDarkMode={setDarkMode}/>
 
 
 			<div className="products-container">
