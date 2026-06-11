@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import AdminPage from "./pages/AdminPage";
 import OrdersPage from "./pages/OrdersPage";
 import {useState, useEffect} from "react";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
 	const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
@@ -37,6 +38,12 @@ function App() {
   								setDarkMode={setDarkMode}
 						/></ProtectedRoute>
 					}/>
+
+
+					<Route
+    path="/register"
+    element={<RegisterPage />}
+/>
 				<Route
   path="/cart"
   element={

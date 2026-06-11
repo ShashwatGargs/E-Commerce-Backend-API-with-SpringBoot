@@ -99,7 +99,15 @@ function LoginPage() {
 					{
 					loading ? "Logging in..." : "Login"
 				} </button>
+				<p>
+    				Don't have an account?
+				</p>
 
+				<button
+    				onClick={() => navigate("/register")}
+				>
+    			Register
+				</button>
 			</form>
 
 		</div>
